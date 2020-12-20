@@ -22,28 +22,39 @@ import LightBootstrap from './light-bootstrap-main'
 
 // router setup
 import routes from './routes/routes'
-
 import './registerServiceWorker'
+// import config from "./vue.config";
+
 // plugin setup
 Vue.use(VueRouter)
 Vue.use(LightBootstrap)
 
 // configure router
 const router = new VueRouter({
-  routes, // short for routes: routes
-  linkActiveClass: 'nav-item active',
-  scrollBehavior: (to) => {
-    if (to.hash) {
-      return {selector: to.hash}
-    } else {
-      return { x: 0, y: 0 }
+    routes, // short for routes: routes
+    linkActiveClass: 'nav-item active',
+    scrollBehavior: (to) => {
+        if (to.hash) {
+            return { selector: to.hash }
+        } else {
+            return { x: 0, y: 0 }
+        }
     }
-  }
+})
+
+const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2
+})
+
+Vue.filter('currencyFormat', function(value) {
+    return value.type === "$" ? `${formatter.format(value.value)}` : value.value;
 })
 
 /* eslint-disable no-new */
 new Vue({
-  el: '#app',
-  render: h => h(App),
-  router
+    el: '#app',
+    render: h => h(App),
+    router
 })

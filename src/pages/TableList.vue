@@ -7,96 +7,129 @@
             class="strpied-tabled-with-hover"
             body-classes="table-full-width table-responsive"
           >
-            <template slot="header">
-              <h4 class="card-title">支出列表</h4>
-              <p class="card-category">{{ filterDate }}</p>
-            </template>
             <l-table
               class="table-hover table-striped table-sm"
-              :columns="table1.columns"
-              :data="table1.data"
+              :columns="InvoiceList.columns"
+              :data="InvoiceList.data"
             >
             </l-table>
           </card>
         </div>
       </div>
     </div>
+    <pagination
+      v-model="page"
+      :records="totalRec"
+      :per-page="pageLine"
+      @paginate="goPage"
+    />
   </div>
 </template>
 <script>
 import LTable from "src/components/Table.vue";
-import Card from "src/components/Cards/Card.vue";
+import axios from "axios";
+import Pagination from "vue-pagination-2";
+
 const tableColumns = [
-  "编号 ",
-  "日期",
-  "收款方",
-  "类别",
-  "金额",
-  "GST",
-  "总额",
-  "文件",
-  "备注",
-  "Active",
+  { id: 1, type: "", align: "right", name: "ID", caption: "编号" },
+  { id: 2, type: "", align: "", name: "ViewDate", caption: "日期" },
+  { id: 3, type: "", align: "", name: "Payee", caption: "收款方" },
+  { id: 4, type: "", align: "", name: "Category", caption: "类别" },
+  { id: 5, type: "$", align: "right", name: "Subtotal", caption: "金额" },
+  { id: 6, type: "$", align: "right", name: "GST", caption: "GST" },
+  { id: 7, type: "$", align: "right", name: "Total", caption: "总额" },
+  {
+    id: 8,
+    type: "check",
+    align: "center",
+    name: "IsElectronic",
+    caption: "文件",
+  },
+  { id: 9, type: "", align: "", name: "Notes", caption: "备注" },
+  { id: 10, type: "hidden", align: "", name: "Visible", caption: "" },
 ];
-const tableData = [
-  {
-    id: 1,
-    date: "2020/3/5",
-    payee: "Dakota Rice",
-    cat:"food",
-    amount: "$36.738",
-    country: "Niger",
-    city: "Oud-Turnhout",
-  },
-  {
-    id: 2,
-    date: "2020/3/15",
-    payee: "Minerva Hooper",
-    amount: "$23,789",
-    country: "Curaçao",
-    city: "Sinaai-Waas",
-  },
-  {
-    id: 3,
-    name: "Sage Rodriguez",
-    amount: "$56,142",
-    country: "Netherlands",
-    city: "Baileux",
-  },
-  {
-    id: 4,
-    payee: "Philip Chaney",
-    amount: "$38,735",
-    country: "Korea, South",
-    city: "Overland Park",
-  },
-  {
-    id: 5,
-    payee: "Doris Greene",
-    salary: "$63,542",
-    country: "Malawi",
-    city: "Feldkirchen in Kärnten",
-  },
-];
+
 export default {
   components: {
     LTable,
-    Card,
+    Pagination,
   },
   data() {
     return {
-      table1: {
-        columns: [...tableColumns],
-        data: [...tableData],
-      },
-      table2: {
-        columns: [...tableColumns],
-        data: [...tableData],
-      },
+      webApiRoot: process.env.VUE_APP_WEB_API_ROOT,
+      InvoiceList: { columns: [], data: [] },
       filterDate: "2020/1/1 - 2020/12/31",
+      page: 1,
+      totalRec: 0,
+      pageLine: 18,
+      pageTitle: "支出列表",
     };
+  },
+  created() {
+    this.$emit("onViewChange",{main:this.pageTitle,sub:this.filterDate});
+
+    const urlGetInvoiceStat = "invoice/stat/1";
+    this.callAPI(this.popURL(urlGetInvoiceStat), "post", null, (data1) => {
+      this.totalRec = data1.TotalRec;
+      this.updateList();
+    });
+  },
+  computed: {},
+  methods: {
+    popURL(url) {
+      return `${this.webApiRoot}${url}`;
+    },
+    callAPI(url, method, data, onSucc) {
+      const prom =
+        method == "get"
+          ? axios.get(url, { data: data })
+          : method == "post"
+          ? axios.post(url, { data: data })
+          : null;
+      if (prom !== null) {
+        prom
+          .then((response) => {
+            if (response.status == 200) {
+              if (onSucc !== null) {
+                onSucc(response.data);
+              }
+            } else {
+              console.log(
+                `Calling API Failed. Status Code: ${response.status}.`
+              );
+            }
+          })
+          .catch((error) => {
+            console.log(`Failed: ${error.message}`);
+          });
+      }
+    },
+    goPage() {
+      this.updateList();
+    },
+    updateList() {
+      this.callAPI(
+        this.popURL(`invoice/list/1/${this.page}/${this.pageLine}`),
+        "post",
+        null,
+        (data) => {
+          this.InvoiceList = {
+            columns: [...tableColumns],
+            data: [...data],
+          };
+        }
+      );
+    },
   },
 };
 </script>
 <style>
+.main-panel > .content {
+  padding: 15px 15px 0px 15px;
+}
+.VuePagination {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 15px;
+}
 </style>

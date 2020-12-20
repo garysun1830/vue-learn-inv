@@ -6,7 +6,7 @@
     <div class="card-header" v-if="$slots.header || title" :class="headerClasses">
       <slot name="header">
         <h4 class="card-title">{{title}}</h4>
-        <p class="card-category" v-if="subTitle">{{subTitle}}</p>
+        <p class="card-category" v-if="subTitle">{{subTitle}}77777777777777</p>
       </slot>
     </div>
     <div class="card-body" v-if="$slots.default" :class="bodyClasses">
