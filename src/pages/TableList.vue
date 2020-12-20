@@ -61,7 +61,7 @@ export default {
       filterDate: "2020/1/1 - 2020/12/31",
       page: 1,
       totalRec: 0,
-      pageLine: 18,
+      pageLine: 20,
       pageTitle: "支出列表",
     };
   },
