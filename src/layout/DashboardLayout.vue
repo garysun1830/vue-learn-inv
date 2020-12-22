@@ -22,7 +22,7 @@
         <i class="nc-icon nc-atom"></i>
         <p>Icons</p>
       </sidebar-link>
-      <sidebar-link to="/admin/maps">
+      <sidebar-link to="/admin/report">
         <i class="nc-icon nc-chart-bar-32"></i>
         <p>税务报表</p>
       </sidebar-link>
@@ -42,11 +42,12 @@
       <top-navbar
         :PageTitle="pageTitle"
         :PageSubTitle="subPageTitle"
+        :TaxFormVisible="taxFormVisible"
       ></top-navbar>
 
       <dashboard-content
         @click="toggleSidebar"
-        @onContentChange="updatePageTitle"
+        @onContentChange="updateViewPage"
       >
       </dashboard-content>
 
@@ -63,7 +64,11 @@ import DashboardContent from "./Content.vue";
 import MobileMenu from "./MobileMenu.vue";
 export default {
   data() {
-    return { pageTitle: "sdsfad", subPageTitle: "sdsfad" };
+    return {
+      pageTitle: null,
+      subPageTitle: null,
+      taxFormVisible: false,
+    };
   },
   components: {
     TopNavbar,
@@ -77,9 +82,10 @@ export default {
         this.$sidebar.displaySidebar(false);
       }
     },
-    updatePageTitle(title) {
-      this.pageTitle = title.main;
-      this.subPageTitle = title.sub;
+    updateViewPage(viewPage) {
+      this.pageTitle = viewPage.mainTitle;
+      this.subPageTitle = viewPage.subTitle;
+      this.taxFormVisible = viewPage.taxFormVisible;
     },
   },
 };

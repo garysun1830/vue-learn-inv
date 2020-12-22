@@ -2,15 +2,18 @@
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">{{ PageTitle }}</a>
-      <span class="sub-page-title"> [{{ PageSubTitle }}]</span>
+      <span class="sub-page-title"> {{ PageSubTitle }}</span>
       <div class="collapse navbar-collapse justify-content-left">
-        <ul class="navbar-nav">
-          <base-dropdown title="Rent 1830">
-            <a class="dropdown-item" href="#">Rent 1830</a>
-            <a class="dropdown-item" href="#">Rent 4321</a>
-            <a class="dropdown-item" href="#">Rent Silver</a>
-            <div class="divider"></div>
-            <a class="dropdown-item" href="#">Separated link</a>
+        <ul class="navbar-nav" v-show="TaxFormVisible">
+          <base-dropdown :title="selTaxForm">
+            <a
+              class="dropdown-item"
+              href="#"
+              v-for="taxForm in taxForms"
+              :key="taxForm.ID"
+              @click="clickTaxForm(taxForm.Name)"
+              >{{ taxForm.Name }}</a
+            >
           </base-dropdown>
         </ul>
       </div>
@@ -45,6 +48,8 @@
   </nav>
 </template>
 <script>
+import commonMothods from "src/commonMothod";
+
 export default {
   computed: {
     routeName() {
@@ -55,6 +60,8 @@ export default {
   data() {
     return {
       activeNotifications: false,
+      taxForms: [],
+      selTaxForm: null,
     };
   },
   methods: {
@@ -73,10 +80,23 @@ export default {
     hideSidebar() {
       this.$sidebar.displaySidebar(false);
     },
+    clickTaxForm(text) {
+      this.selTaxForm = text;
+    },
   },
   props: {
     PageTitle: String,
     PageSubTitle: String,
+    TaxFormVisible: Boolean,
+  },
+  created() {
+    this.TaxFormVisible = false;
+    commonMothods.callAPI("list/form/1", "get", null, (data) => {
+      this.taxForms = data;
+      if (this.taxForms.length > 0) {
+        this.selTaxForm = this.taxForms[0].Name;
+      }
+    });
   },
 };
 </script>

@@ -27,8 +27,8 @@
 </template>
 <script>
 import LTable from "src/components/Table.vue";
-import axios from "axios";
 import Pagination from "vue-pagination-2";
+import commonMothods from "src/commonMothod";
 
 const tableColumns = [
   { id: 1, type: "", align: "right", name: "ID", caption: "编号" },
@@ -56,7 +56,6 @@ export default {
   },
   data() {
     return {
-      webApiRoot: process.env.VUE_APP_WEB_API_ROOT,
       InvoiceList: { columns: [], data: [] },
       filterDate: "2020/1/1 - 2020/12/31",
       page: 1,
@@ -66,50 +65,24 @@ export default {
     };
   },
   created() {
-    this.$emit("onViewChange",{main:this.pageTitle,sub:this.filterDate});
-
-    const urlGetInvoiceStat = "invoice/stat/1";
-    this.callAPI(this.popURL(urlGetInvoiceStat), "post", null, (data1) => {
-      this.totalRec = data1.TotalRec;
+    this.$emit("onViewChange", {
+      mainTitle: this.pageTitle,
+      subTitle: `[${this.filterDate}]`,
+      taxFormVisible: false,
+    });
+    commonMothods.callAPI("invoice/stat/1", "post", null, (data) => {
+      this.totalRec = data.TotalRec;
       this.updateList();
     });
   },
   computed: {},
   methods: {
-    popURL(url) {
-      return `${this.webApiRoot}${url}`;
-    },
-    callAPI(url, method, data, onSucc) {
-      const prom =
-        method == "get"
-          ? axios.get(url, { data: data })
-          : method == "post"
-          ? axios.post(url, { data: data })
-          : null;
-      if (prom !== null) {
-        prom
-          .then((response) => {
-            if (response.status == 200) {
-              if (onSucc !== null) {
-                onSucc(response.data);
-              }
-            } else {
-              console.log(
-                `Calling API Failed. Status Code: ${response.status}.`
-              );
-            }
-          })
-          .catch((error) => {
-            console.log(`Failed: ${error.message}`);
-          });
-      }
-    },
     goPage() {
       this.updateList();
     },
     updateList() {
-      this.callAPI(
-        this.popURL(`invoice/list/1/${this.page}/${this.pageLine}`),
+      commonMothods.callAPI(
+        `invoice/list/1/${this.page}/${this.pageLine}`,
         "post",
         null,
         (data) => {
