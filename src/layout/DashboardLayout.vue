@@ -10,13 +10,13 @@
         <i class="nc-icon nc-circle-09"></i>
         <p>User Profile</p>
       </sidebar-link>
-      <sidebar-link to="/admin/table-list">
+      <sidebar-link to="/admin/invoice-list">
         <i class="nc-icon nc-notes"></i>
         <p>支出列表</p>
       </sidebar-link>
-      <sidebar-link to="/admin/typography">
-        <i class="nc-icon nc-paper-2"></i>
-        <p>Typography</p>
+      <sidebar-link to="/admin/filter">
+        <i class="nc-icon nc-vector"></i>
+        <p>过滤器</p>
       </sidebar-link>
       <sidebar-link to="/admin/icons">
         <i class="nc-icon nc-atom"></i>
@@ -40,12 +40,16 @@
     </side-bar>
     <div class="main-panel">
       <top-navbar
-        :PageTitle="pageTitle"
-        :PageSubTitle="subPageTitle"
+        :PageTitle="PageTitle"
+        :FilterDate="FilterDate"
+        :FilterDateVisible="FilterDateVisible"
         :TaxFormVisible="taxFormVisible"
+        @OnTaxFormChange="updateTaxForm"
       ></top-navbar>
 
       <dashboard-content
+        :FilterDate="FilterDate"
+        :TaxForm="taxForm"
         @click="toggleSidebar"
         @onContentChange="updateViewPage"
       >
@@ -65,9 +69,11 @@ import MobileMenu from "./MobileMenu.vue";
 export default {
   data() {
     return {
-      pageTitle: null,
-      subPageTitle: null,
+      PageTitle: null,
+      FilterDate: "2020/1/1 - 2020/12/31",
+      FilterDateVisible: false,
       taxFormVisible: false,
+      taxForm: null,
     };
   },
   components: {
@@ -83,10 +89,18 @@ export default {
       }
     },
     updateViewPage(viewPage) {
-      this.pageTitle = viewPage.mainTitle;
-      this.subPageTitle = viewPage.subTitle;
+      this.PageTitle = viewPage.PageTitle;
+      this.FilterDateVisible = viewPage.FilterDateVisible;
       this.taxFormVisible = viewPage.taxFormVisible;
+    },
+    updateTaxForm(TaxForm) {
+      this.taxForm = TaxForm;
     },
   },
 };
 </script>
+<style>
+.main-panel > .content {
+  padding: 15px 15px 0px 15px;
+}
+</style>

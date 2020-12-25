@@ -28,7 +28,11 @@
               v-if="column.type === 'check'"
               :checked="itemChecked(item, column)"
             />
-            <span v-else> {{ itemValue(item, column) | currencyFormat }}</span>
+            <span v-else-if="column.type === '$'">
+              {{ itemValue(item, column) | currencyFormat }}</span
+            >
+            <span v-else-if="itemValue(item, column) === null"> &nbsp;</span>
+            <span v-else> {{ itemValue(item, column) }}</span>
           </td>
         </slot>
       </tr>
@@ -38,17 +42,18 @@
 <script>
 export default {
   name: "l-table",
-  props: {
-    columns: Array,
-    data: Array,
-  },
+  props: ["columns", "data"],
   methods: {
     itemValue(item, column) {
       const val = item[column.name];
-      return { type: column.type, value: val === null ? " " : val };
+      return val === null ? null : val;
     },
     itemClass(column) {
-      return column.align === "right" ? "text-right" : column.align === "center"? "text-center" : null ;
+      return column.align === "right"
+        ? "text-right"
+        : column.align === "center"
+        ? "text-center"
+        : null;
     },
     columnShow(column) {
       return column.type != "hidden";
@@ -57,7 +62,7 @@ export default {
       return item[column.name];
     },
     itemShow(item) {
-      return item["Visible"];
+      return item["Visible"] === undefined || item["Visible"];
     },
   },
 };

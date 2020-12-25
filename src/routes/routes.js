@@ -5,8 +5,8 @@ import NotFound from '../pages/NotFoundPage.vue'
 // Admin pages
 import Overview from 'src/pages/Overview.vue'
 import UserProfile from 'src/pages/UserProfile.vue'
-import TableList from 'src/pages/TableList.vue'
-import Typography from 'src/pages/Typography.vue'
+import InvoiceList from 'src/pages/InvoiceList.vue'
+import Filter from 'src/pages/Filter.vue'
 import Icons from 'src/pages/Icons.vue'
 import Report from 'src/pages/Report.vue'
 import Notifications from 'src/pages/Notifications.vue'
@@ -34,14 +34,14 @@ const routes = [
         component: UserProfile
       },
       {
-        path: 'table-list',
-        name: 'Table List',
-        component: TableList
+        path: 'invoice-list',
+        name: 'Invoice List',
+        component: InvoiceList
       },
       {
-        path: 'typography',
-        name: 'Typography',
-        component: Typography
+        path: 'filter',
+        name: 'Filter',
+        component: Filter
       },
       {
         path: 'icons',

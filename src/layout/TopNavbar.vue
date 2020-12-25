@@ -1,23 +1,9 @@
 <template>
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">{{ PageTitle }}</a>
-      <span class="sub-page-title"> {{ PageSubTitle }}</span>
-      <div class="collapse navbar-collapse justify-content-left">
-        <ul class="navbar-nav" v-show="TaxFormVisible">
-          <base-dropdown :title="selTaxForm">
-            <a
-              class="dropdown-item"
-              href="#"
-              v-for="taxForm in taxForms"
-              :key="taxForm.ID"
-              @click="clickTaxForm(taxForm.Name)"
-              >{{ taxForm.Name }}</a
-            >
-          </base-dropdown>
-        </ul>
-      </div>
-
+      <span class="navbar-brand" href="#">{{ PageTitle }}</span>
+      <span class="sub-page-title" v-show="FilterDateVisible"> {{ FilterDate }}</span>
+      <TaxForms :Visible="TaxFormVisible" @OnChange="updateTaxForm"></TaxForms>
       <button
         type="button"
         class="navbar-toggler navbar-toggler-right"
@@ -48,7 +34,7 @@
   </nav>
 </template>
 <script>
-import commonMothods from "src/commonMothod";
+import TaxForms from "../components/TaxForm.vue";
 
 export default {
   computed: {
@@ -60,9 +46,10 @@ export default {
   data() {
     return {
       activeNotifications: false,
-      taxForms: [],
-      selTaxForm: null,
     };
+  },
+  components: {
+    TaxForms,
   },
   methods: {
     capitalizeFirstLetter(string) {
@@ -80,27 +67,21 @@ export default {
     hideSidebar() {
       this.$sidebar.displaySidebar(false);
     },
-    clickTaxForm(text) {
-      this.selTaxForm = text;
+    updateTaxForm(taxForm) {
+      this.$emit("OnTaxFormChange", taxForm);
     },
   },
-  props: {
-    PageTitle: String,
-    PageSubTitle: String,
-    TaxFormVisible: Boolean,
-  },
-  created() {
-    this.TaxFormVisible = false;
-    commonMothods.callAPI("list/form/1", "get", null, (data) => {
-      this.taxForms = data;
-      if (this.taxForms.length > 0) {
-        this.selTaxForm = this.taxForms[0].Name;
-      }
-    });
-  },
+  props: ["PageTitle", "FilterDate", "FilterDateVisible", "TaxFormVisible"],
 };
 </script>
 <style>
+.navbar-brand {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+.navbar .navbar-brand {
+  font-weight: 600;
+}
 .sub-page-title {
   margin-left: 20px;
   margin-right: 20px;

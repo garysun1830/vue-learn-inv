@@ -57,7 +57,6 @@ export default {
   data() {
     return {
       InvoiceList: { columns: [], data: [] },
-      filterDate: "2020/1/1 - 2020/12/31",
       page: 1,
       totalRec: 0,
       pageLine: 20,
@@ -66,8 +65,8 @@ export default {
   },
   created() {
     this.$emit("onViewChange", {
-      mainTitle: this.pageTitle,
-      subTitle: `[${this.filterDate}]`,
+      PageTitle: this.pageTitle,
+      FilterDateVisible: true,
       taxFormVisible: false,
     });
     commonMothods.callAPI("invoice/stat/1", "post", null, (data) => {
@@ -75,7 +74,7 @@ export default {
       this.updateList();
     });
   },
-  computed: {},
+  props: { FilterDate: String },
   methods: {
     goPage() {
       this.updateList();
@@ -98,8 +97,9 @@ export default {
 </script>
 <style>
 .main-panel > .content {
-  padding: 15px 15px 0px 15px;
+  padding-bottom: 0px;
 }
+
 .VuePagination {
   display: flex;
   justify-content: flex-end;

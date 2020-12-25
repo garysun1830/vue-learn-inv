@@ -16,10 +16,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import App from './App.vue'
-
 // LightBootstrap plugin
 import LightBootstrap from './light-bootstrap-main'
-
+import { Switch , Button } from 'mint-ui';
+import 'mint-ui/lib/style.css'
 // router setup
 import routes from './routes/routes'
 import './registerServiceWorker'
@@ -28,7 +28,8 @@ import './registerServiceWorker'
 // plugin setup
 Vue.use(VueRouter)
 Vue.use(LightBootstrap)
-
+Vue.component(Switch.name, Switch);
+Vue.component(Button.name, Button);
 // configure router
 const router = new VueRouter({
     routes, // short for routes: routes
@@ -48,13 +49,14 @@ const formatter = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2
 })
 
-Vue.filter('currencyFormat', function(value) {
-    return value.type === "$" ? `${formatter.format(value.value)}` : value.value;
+Vue.filter('currencyFormat', function (value) {
+    return `${formatter.format(value)}`;
 })
 
 /* eslint-disable no-new */
 new Vue({
     el: '#app',
-    render: h => h(App),
+    // vuetify: new Vuetify(),
+     render: h => h(App),
     router
 })
