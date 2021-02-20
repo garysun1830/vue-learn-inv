@@ -64,7 +64,7 @@ export default {
       totalRec: 0,
       pageLine: 20,
       pageTitle: "支出列表",
-      defaultSortField: 1,
+      defaultSortField: "ID",
       filter: {},
     };
   },
@@ -74,7 +74,10 @@ export default {
       FilterDateVisible: true,
       taxFormVisible: false,
     });
-    this.filter = search.load({ SortField: this.defaultSortField });
+    this.filter = search.load({
+      SortTable: "payment",
+      SortField: this.defaultSortField,
+    });
     commonMothods.callAPI("invoice/stat/1", "post", this.filter, (data) => {
       this.totalRec = data.TotalRec;
       this.updateList();
@@ -84,7 +87,7 @@ export default {
     goPage() {
       this.updateList();
     },
-    OnChangeSort(id) {
+    OnChangeSort() {
       this.updateList();
     },
     updateList() {

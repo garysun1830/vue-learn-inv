@@ -11,7 +11,6 @@ const search = {
             SelectedPayees: [],
             Keyword: null,
             DESC: false,
-            SortField: 0
         };
         const strData = localStorage.getItem("Filter");
         if (
@@ -27,10 +26,11 @@ const search = {
             catch { }
         }
         if (DefautValue) {
-            if (!filterData.SortField || filterData.SortField == 0) {
+            if (!filterData.SortField || filterData.SortTable != DefautValue.SortTable) {
                 filterData.SortField = DefautValue.SortField;
                 filterData.DESC = false;
             }
+            filterData.SortTable = DefautValue.SortTable;
             filterData.SelectedCategories = this.removeMissing(filterData.SelectedCategories, DefautValue.AllCatogories);
             filterData.SelectedPayees = this.removeMissing(filterData.SelectedPayees, DefautValue.AllPayees);
         }

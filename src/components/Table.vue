@@ -77,12 +77,12 @@ export default {
       return item["Visible"] === undefined || item["Visible"];
     },
     columnSort(column) {
-      if (column.id == this.filter.SortField)
+      if (column.name == this.filter.SortField)
         return this.filter.DESC ? "down" : "up";
       return null;
     },
     clickColumn(column) {
-      search.changeSort(this.filter, column.id);
+      search.changeSort(this.filter, column.name);
       this.$emit("ChangeSort");
     },
   },

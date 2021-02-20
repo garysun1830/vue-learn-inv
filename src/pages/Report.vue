@@ -30,6 +30,7 @@
               :columns="ReportList.columns"
               :data="ReportList.data"
               :filter="filter"
+              @ChangeSort="OnChangeSort"
             >
             </l-table>
           </card>
@@ -61,7 +62,7 @@ export default {
   data() {
     return {
       pageTitle: "税务报表",
-      defaultSortField: 2,
+      defaultSortField: null,
       filter: {},
       buttons: [
         { id: 1, name: "Tax", active: null },
@@ -77,6 +78,7 @@ export default {
       this.buttons.forEach((btn) => {
         if (btn.id === id) {
           btn.active = "active";
+          this.defaultSortField = btn.name;
           this.createReport(btn);
         } else {
           btn.active = null;
@@ -105,9 +107,22 @@ export default {
         }
       );
     },
+    updateReport() {
+      this.buttons.forEach((btn) => {
+        if (btn.active === "active") {
+          this.createReport(btn);
+        }
+      });
+    },
+    OnChangeSort() {
+      this.updateReport();
+    },
   },
   created() {
-    this.filter = search.load({ SortField: this.defaultSortField });
+    this.filter = search.load({
+      SortTable: "report",
+      SortField: this.defaultSortField,
+    });
     this.$emit("onViewChange", {
       PageTitle: this.pageTitle,
       FilterDateVisible: true,
@@ -122,11 +137,7 @@ export default {
   props: ["TaxForm"],
   watch: {
     TaxForm: function (newVal, oldVal) {
-      this.buttons.forEach((btn) => {
-        if (btn.active === "active") {
-          this.createReport(btn);
-        }
-      });
+      this.updateReport();
     },
   },
 };
