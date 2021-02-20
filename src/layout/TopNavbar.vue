@@ -2,7 +2,9 @@
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
       <span class="navbar-brand" href="#">{{ PageTitle }}</span>
-      <span class="sub-page-title" v-show="FilterDateVisible"> {{ FilterDate }}</span>
+      <span class="sub-page-title" v-show="FilterDateVisible">
+        {{ filterText }}</span
+      >
       <TaxForms :Visible="TaxFormVisible" @OnChange="updateTaxForm"></TaxForms>
       <button
         type="button"
@@ -35,6 +37,7 @@
 </template>
 <script>
 import TaxForms from "../components/TaxForm.vue";
+import search from "src/Search";
 
 export default {
   computed: {
@@ -42,14 +45,21 @@ export default {
       const { name } = this.$route;
       return this.capitalizeFirstLetter(name);
     },
+    filterText() {
+      return search.text(this.filter);
+    },
   },
   data() {
     return {
       activeNotifications: false,
+      filter: {},
     };
   },
   components: {
     TaxForms,
+  },
+  created() {
+    this.filter = search.load();
   },
   methods: {
     capitalizeFirstLetter(string) {
@@ -70,8 +80,11 @@ export default {
     updateTaxForm(taxForm) {
       this.$emit("OnTaxFormChange", taxForm);
     },
+    updateFromView() {
+          this.filter = search.load();
+    },
   },
-  props: ["PageTitle", "FilterDate", "FilterDateVisible", "TaxFormVisible"],
+  props: ["PageTitle", "FilterDateVisible", "TaxFormVisible"],
 };
 </script>
 <style>

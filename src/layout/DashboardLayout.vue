@@ -38,17 +38,16 @@
         </sidebar-link>
       </template>
     </side-bar>
-    <div class="main-panel">
+    <div class="main-panel" style="max-height: 2000px; height: auto">
       <top-navbar
         :PageTitle="PageTitle"
-        :FilterDate="FilterDate"
         :FilterDateVisible="FilterDateVisible"
         :TaxFormVisible="taxFormVisible"
         @OnTaxFormChange="updateTaxForm"
+        ref="TopBar"
       ></top-navbar>
 
       <dashboard-content
-        :FilterDate="FilterDate"
         :TaxForm="taxForm"
         @click="toggleSidebar"
         @onContentChange="updateViewPage"
@@ -70,7 +69,6 @@ export default {
   data() {
     return {
       PageTitle: null,
-      FilterDate: "2020/1/1 - 2020/12/31",
       FilterDateVisible: false,
       taxFormVisible: false,
       taxForm: null,
@@ -89,9 +87,12 @@ export default {
       }
     },
     updateViewPage(viewPage) {
-      this.PageTitle = viewPage.PageTitle;
-      this.FilterDateVisible = viewPage.FilterDateVisible;
-      this.taxFormVisible = viewPage.taxFormVisible;
+      if (viewPage) {
+        this.PageTitle = viewPage.PageTitle;
+        this.FilterDateVisible = viewPage.FilterDateVisible;
+        this.taxFormVisible = viewPage.taxFormVisible;
+      }
+      this.$refs.TopBar.updateFromView();
     },
     updateTaxForm(TaxForm) {
       this.taxForm = TaxForm;

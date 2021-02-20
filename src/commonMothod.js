@@ -2,16 +2,17 @@ import axios from "axios";
 
 const commonMothods = {
     data() {
-        return{ webApiRoot : process.env.VUE_APP_WEB_API_ROOT};
+        return { webApiRoot: process.env.VUE_APP_WEB_API_ROOT };
     },
 
     callAPI(url, method, data, onSucc, onFail) {
         url = `${process.env.VUE_APP_WEB_API_ROOT}${url}`;
+        const strData = data === null ? null : `=${JSON.stringify(data)}`;
         const prom =
             method == "get"
-                ? axios.get(url, { data: data })
+                ? axios.get(url, strData)
                 : method == "post"
-                    ? axios.post(url, { data: data })
+                    ? axios.post(url, strData)
                     : null;
         if (prom !== null) {
             prom
@@ -36,6 +37,9 @@ const commonMothods = {
                     }
                 });
         }
+    },
+    SelectItems(ele) {
+
     },
 
 };

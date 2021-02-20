@@ -2,7 +2,6 @@
   <transition name="fade" mode="out-in">
     <router-view
       @onViewChange="updatePageTitle"
-      :FilterDate="FilterDate"
       :TaxForm="TaxForm"
     ></router-view>
   </transition>
@@ -14,7 +13,7 @@ export default {
       this.$emit("onContentChange", title);
     },
   },
-  props: ["FilterDate", "TaxForm"],
+  props: ["TaxForm"],
 };
 </script>
 <style>

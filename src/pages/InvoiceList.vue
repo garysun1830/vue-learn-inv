@@ -11,6 +11,8 @@
               class="table-hover table-striped table-sm"
               :columns="InvoiceList.columns"
               :data="InvoiceList.data"
+              :filter="filter"
+              @ChangeSort="OnChangeSort"
             >
             </l-table>
           </card>
@@ -29,6 +31,7 @@
 import LTable from "src/components/Table.vue";
 import Pagination from "vue-pagination-2";
 import commonMothods from "src/commonMothod";
+import search from "src/Search";
 
 const tableColumns = [
   { id: 1, type: "", align: "right", name: "ID", caption: "编号" },
@@ -61,6 +64,8 @@ export default {
       totalRec: 0,
       pageLine: 20,
       pageTitle: "支出列表",
+      defaultSortField: 1,
+      filter: {},
     };
   },
   created() {
@@ -69,21 +74,24 @@ export default {
       FilterDateVisible: true,
       taxFormVisible: false,
     });
-    commonMothods.callAPI("invoice/stat/1", "post", null, (data) => {
+    this.filter = search.load({ SortField: this.defaultSortField });
+    commonMothods.callAPI("invoice/stat/1", "post", this.filter, (data) => {
       this.totalRec = data.TotalRec;
       this.updateList();
     });
   },
-  props: { FilterDate: String },
   methods: {
     goPage() {
+      this.updateList();
+    },
+    OnChangeSort(id) {
       this.updateList();
     },
     updateList() {
       commonMothods.callAPI(
         `invoice/list/1/${this.page}/${this.pageLine}`,
         "post",
-        null,
+        this.filter,
         (data) => {
           this.InvoiceList = {
             columns: [...tableColumns],

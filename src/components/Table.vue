@@ -9,7 +9,17 @@
             :class="itemClass(column)"
             v-show="columnShow(column)"
           >
-            {{ column.caption }}
+            <span @click="clickColumn(column)">{{ column.caption }}</span>
+            <i
+              class="fa fa-caret-up"
+              aria-hidden="true"
+              v-show="columnSort(column) == 'up'"
+            ></i>
+            <i
+              class="fa fa-caret-down"
+              aria-hidden="true"
+              v-show="columnSort(column) == 'down'"
+            ></i>
           </th>
         </tr>
       </slot>
@@ -29,7 +39,7 @@
               :checked="itemChecked(item, column)"
             />
             <span v-else-if="column.type === '$'">
-              {{ itemValue(item, column) | currencyFormat }}</span
+              {{ itemValue(item, column) | formatCurrency }}</span
             >
             <span v-else-if="itemValue(item, column) === null"> &nbsp;</span>
             <span v-else> {{ itemValue(item, column) }}</span>
@@ -40,9 +50,11 @@
   </table>
 </template>
 <script>
+import search from "src/Search";
+
 export default {
   name: "l-table",
-  props: ["columns", "data"],
+  props: ["columns", "data", "filter"],
   methods: {
     itemValue(item, column) {
       const val = item[column.name];
@@ -64,12 +76,22 @@ export default {
     itemShow(item) {
       return item["Visible"] === undefined || item["Visible"];
     },
+    columnSort(column) {
+      if (column.id == this.filter.SortField)
+        return this.filter.DESC ? "down" : "up";
+      return null;
+    },
+    clickColumn(column) {
+      search.changeSort(this.filter, column.id);
+      this.$emit("ChangeSort");
+    },
   },
 };
 </script>
 <style>
 .table > thead > tr > th {
   text-align: center !important;
+  cursor: default;
 }
 .currency {
   text-align: right !important;

@@ -29,6 +29,7 @@
               class="table-hover table-striped table-sm"
               :columns="ReportList.columns"
               :data="ReportList.data"
+              :filter="filter"
             >
             </l-table>
           </card>
@@ -40,6 +41,7 @@
 <script>
 import LTable from "src/components/Table.vue";
 import commonMothods from "src/commonMothod";
+import search from "src/Search";
 
 const tableColumns = [
   { id: 2, type: "", align: "", name: "Name", caption: "名称" },
@@ -59,6 +61,8 @@ export default {
   data() {
     return {
       pageTitle: "税务报表",
+      defaultSortField: 2,
+      filter: {},
       buttons: [
         { id: 1, name: "Tax", active: null },
         { id: 2, name: "Payment", active: null },
@@ -91,7 +95,7 @@ export default {
       commonMothods.callAPI(
         `report/1/${btn.name}/${this.TaxForm.ID}/${this.ActiveOnly ? 1 : 0}`,
         "post",
-        null,
+        this.filter,
         (data) => {
           data.forEach((dt) => (dt["Space"] = null));
           this.ReportList = {
@@ -103,6 +107,7 @@ export default {
     },
   },
   created() {
+    this.filter = search.load({ SortField: this.defaultSortField });
     this.$emit("onViewChange", {
       PageTitle: this.pageTitle,
       FilterDateVisible: true,
